@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Todo List</title>
+  </head>
+  <body>
+    <h1>Todo List</h1>
+    <h2>All the tasks along with their priority</h2>
+    <ul id="todo-list">
+    </ul>
+
+    <script>
+      const todoList = document.getElementById('todo-list');
+
+      // Fetch todo data from backend
+      fetch('https://tgt-assignment-production.up.railway.app/api/task/', {
+        headers : {
+            'x-access-token' : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDMxMzM4MzEzZjAxNWNkZmU2ZmQ1ZGUiLCJlbWFpbCI6Iml0c21lc2hhaWthc2lmYWxpQGdtYWlsLmNvbSIsImlhdCI6MTY4MTI3OTk4OCwiZXhwIjoxNjgxMzY2Mzg4fQ.mlrx2QXk5bqsE0f_C1Osu2YX3zzzeaqHu6Swa9UP8o8"
+        }
+      })
+        .then(response => response.json())
+        .then(todos => {
+            console.log(todos);
+          // Helper function to create a todo element
+          const createTodoElement = (todo, index) => {
+            const listItem = document.createElement('li');
+            const priorityText = `(${todo.priority})`;
+            const completedText = todo.status === "Completed" ? '✓' : '';
+            const canceledText = todo.status === "Cancelled" ? '✗' : '';
+            const todoText = `${index + 1}. ${todo.name} ${priorityText} [${completedText}${canceledText}]`;
+
+            listItem.innerText = todoText;
+
+            return listItem;
+          };
+
+          // Render todos
+          todos.data.forEach((todo, index) => {
+            const todoElement = createTodoElement(todo, index);
+            todoList.appendChild(todoElement);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching todo data:', error);
+        });
+    </script>
+  </body>
+</html>
